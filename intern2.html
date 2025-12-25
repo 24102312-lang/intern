@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather App with Icons</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+        }
+
+        .weather-card {
+            background: #fff;
+            width: 350px;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .weather-info {
+            display: none;
+        }
+
+        .weather-info img {
+            width: 100px;
+        }
+
+        .temp {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        p {
+            margin: 6px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="weather-card">
+        <h2>🌦️ Weather App</h2>
+
+        <!-- City Dropdown -->
+        <select id="citySelect" onchange="getWeather()">
+            <option value="">-- Select City --</option>
+            <option value="Chennai">Chennai</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Bengaluru">Bengaluru</option>
+            <option value="Kolkata">Kolkata</option>
+        </select>
+
+        <!-- Weather Info -->
+        <div class="weather-info" id="weatherInfo">
+            <h3 id="cityName"></h3>
+            <img id="weatherIcon" alt="Weather Icon">
+            <p class="temp" id="temperature"></p>
+            <p id="condition"></p>
+            <p id="humidity"></p>
+            <p id="wind"></p>
+            <p id="coordinates"></p>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "YOUR_API_KEY_HERE"; // 🔑 Add your OpenWeather API key
+
+        function getWeather() {
+            const city = document.getElementById("citySelect").value;
+            if (city === "") return;
+
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("weatherInfo").style.display = "block";
+
+                    document.getElementById("cityName").textContent =
+                        `${data.name}, ${data.sys.country}`;
+
+                    document.getElementById("temperature").textContent =
+                        `${data.main.temp} °C`;
+
+                    document.getElementById("condition").textContent =
+                        `Condition: ${data.weather[0].description}`;
+
+                    document.getElementById("humidity").textContent =
+                        `Humidity: ${data.main.humidity}%`;
+
+                    document.getElementById("wind").textContent =
+                        `Wind Speed: ${data.wind.speed} m/s`;
+
+                    document.getElementById("coordinates").textContent =
+                        `Latitude: ${data.coord.lat}, Longitude: ${data.coord.lon}`;
+
+                    // 🌤️ Weather Icon
+                    const iconCode = data.weather[0].icon;
+                    document.getElementById("weatherIcon").src =
+                        `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+                })
+                .catch(() => {
+                    alert("Error fetching weather data");
+                });
+        }
+    </script>
+
+</body>
+</html>
